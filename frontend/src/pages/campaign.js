@@ -30,7 +30,10 @@ const CampaignPage = ({ campaigns }) => {
     </> }
   }))
 
-  const uniqueEmails = campaign.logs.map(log => log.email).filter((itm, idx, arr) => arr.indexOf(itm) === idx);
+  const uniqueEmails = campaign.logs
+    .map(log => log.email)
+    .filter((email, idx, arr) => arr.indexOf(email) === idx)
+    .filter(email => email !== "");
 
   return (
     <Container style={{paddingTop: '4rem'}}>
