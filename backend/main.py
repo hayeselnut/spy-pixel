@@ -27,18 +27,6 @@ cred = credentials.Certificate({
   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-ji2n7%40spy-pixel-2e767.iam.gserviceaccount.com"
 })
 firebase_admin.initialize_app(cred)
-
-# # Use a service account
-# cred = credentials.Application
-# cred = credentials.Certificate('./spy-pixel-admin-sdk.json')
-# firebase_admin.initialize_app(cred)
-
-# client = secretmanager.SecretManagerServiceClient()
-# response = client.access_secret_version(request={'name': 'spy-pixel-admin-sdk'})
-# print(response.payload.data)
-
-# cred = credentials.Certificate(response.payload.data)
-# firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 app = Flask(__name__)
@@ -49,30 +37,26 @@ def hello_world():
 
 @app.route('/spy-pixel.gif')
 def spy_pixel():
-    # print("===================================")
-    # print("Campaign:", request.args.get("campaign"))
-    # print(request.headers)
-    # print(request.cookies)
-    # print("===================================")
+    # We don't want to log our own views
+    if request.headers.get("Referer") != "https://mail.google.com" and request.headers.get("Referer") != "https://hayeselnut.github.io/":
+        # Campaign is loggable
+        if request.args.get("campaign"):
+            # Log to database
+            log = {
+                u'timestamp': datetime.datetime.now(),
+                u'email': request.args.get("email"),
+                u'headers': dict(request.headers),
+                u'cookies': dict(request.cookies)
+            }
 
-    if (request.args.get("campaign")):
-        # Log to database
-        log = {
-            u'timestamp': datetime.datetime.now(),
-            u'email': request.args.get("email"),
-            u'headers': dict(request.headers),
-            u'cookies': dict(request.cookies)
-        }
+            doc_ref = db.collection(u'campaigns').document(request.args.get("campaign"))
+            doc = doc_ref.get()
 
-        doc_ref = db.collection(u'campaigns').document(request.args.get("campaign"))
-        doc = doc_ref.get()
+            if not doc.exists:
+                doc_ref.set({u'logs': []})
 
-        if not doc.exists:
-            doc_ref.set({u'logs': []})
-
-        doc_ref.update({u'logs': firestore.ArrayUnion([log])})
+            doc_ref.update({u'logs': firestore.ArrayUnion([log])})
 
     gif_str = base64.b64decode('R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==')
-    resp = make_response(send_file(io.BytesIO(gif_str), mimetype='image/gif'),200)
-    # resp.set_cookie('userid', "this user doesnt mind cookies", max_age=1296000)
+    resp = make_response(send_file(io.BytesIO(gif_str), mimetype='image/gif'), 200)
     return resp
