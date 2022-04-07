@@ -51,24 +51,28 @@ const CampaignPage = ({ campaigns }) => {
         </Statistic>
       </Statistic.Group>
 
-      <Header as='h2'>Views per recipient</Header>
-      <Table compact celled striped singleLine>
-      <Table.Header>
-        <Table.Row>
-          <Table.HeaderCell>Recipient</Table.HeaderCell>
-          <Table.HeaderCell>Number of views</Table.HeaderCell>
-        </Table.Row>
-      </Table.Header>
+      {uniqueEmails.length > 0 &&
+        <>
+          <Header as='h2'>Views per recipient</Header>
+            <Table compact celled striped singleLine>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Recipient</Table.HeaderCell>
+                <Table.HeaderCell>Number of views</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
 
-      <Table.Body>
-        {uniqueEmails.map((email) => (
-          <Table.Row key={email}>
-            <Table.Cell>{email}</Table.Cell>
-            <Table.Cell>{campaign.logs.filter(log => log.email === email).length}</Table.Cell>
-          </Table.Row>))
-        }
-      </Table.Body>
-    </Table>
+            <Table.Body>
+              {uniqueEmails.map((email) => (
+                <Table.Row key={email}>
+                  <Table.Cell>{email}</Table.Cell>
+                  <Table.Cell>{campaign.logs.filter(log => log.email === email).length}</Table.Cell>
+                </Table.Row>))
+              }
+            </Table.Body>
+          </Table>
+        </>
+      }
 
       <Header as='h2'>Logs</Header>
       <Accordion styled fluid exclusive={false} panels={panels} />
