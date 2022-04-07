@@ -56,7 +56,7 @@ const Dashboard = ({ campaigns }) => {
       <Header as="h2">Active campaigns</Header>
       <div style={{display: "flex", flexWrap: "wrap", rowGap: "2rem", columnGap: "2rem"}}>
         {campaigns.map(campaign => (
-          <Link to={`/spy-pixel/campaign/${campaign.id}`} key={campaign.id}>
+          <Link to={`/campaign/${campaign.id}`} key={campaign.id}>
             <CampaignCard campaign={campaign} />
           </Link>
         ))}

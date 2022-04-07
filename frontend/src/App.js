@@ -36,8 +36,8 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route exact path="/spy-pixel/" element={<Dashboard campaigns={campaigns}/>} />
-        <Route exact path="/spy-pixel/campaign/:campaignId" element={<CampaignPage campaigns={campaigns}/>} />
+        <Route exact path="/" element={<Dashboard campaigns={campaigns}/>} />
+        <Route exact path="/campaign/:campaignId" element={<CampaignPage campaigns={campaigns}/>} />
       </Routes>
     </BrowserRouter>
   )
