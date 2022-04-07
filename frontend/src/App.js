@@ -33,8 +33,6 @@ const App = () => {
     getData();
   }, []);
 
-  console.log("Deployed!");
-
   return (
     <BrowserRouter>
       <Routes>
