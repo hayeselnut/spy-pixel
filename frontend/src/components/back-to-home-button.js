@@ -4,7 +4,7 @@ import { Icon } from "semantic-ui-react";
 
 const BackToHomeButton = () => {
   return (
-    <Link to="/">
+    <Link to="/spy-pixel">
       <Icon size="big" color="black" name="left arrow" />
     </Link>
   )

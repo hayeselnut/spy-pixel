@@ -33,19 +33,13 @@ const App = () => {
     getData();
   }, []);
 
+  console.log("Deployed!");
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Dashboard campaigns={campaigns}/>} />
-        <Route path="campaign/:campaignId" element={<CampaignPage campaigns={campaigns}/>} />
-        <Route
-        path="*"
-        element={
-          <main style={{ padding: "1rem" }}>
-            <p>404: There's nothing here!</p>
-          </main>
-        }
-      />
+        <Route exact path="/spy-pixel/" element={<Dashboard campaigns={campaigns}/>} />
+        <Route exact path="/spy-pixel/campaign/:campaignId" element={<CampaignPage campaigns={campaigns}/>} />
       </Routes>
     </BrowserRouter>
   )
