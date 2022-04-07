@@ -16,7 +16,7 @@ const Dashboard = ({ campaigns }) => {
     setButtonicon("check");
   }
 
-  const regex = new RegExp("^[a-zA-Z0-9-_@+\.]+$");
+  const regex = new RegExp("^[a-zA-Z0-9-_@+.]+$");
   const isAlphanumeric = (string) => {
     return string === "" || regex.test(string);
   }
