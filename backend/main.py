@@ -1,15 +1,44 @@
-from flask import Flask, send_file, make_response, request
-import base64
 import datetime
+import base64
 import io
+import os
+
+from flask import Flask, send_file, make_response, request
+from dotenv import load_dotenv
 
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-# Use a service account
-cred = credentials.Certificate('./spy-pixel-admin-sdk.json')
+load_dotenv()  # take environment variables from .env.
+
+# Use the application default credentials
+# cred = credentials.ApplicationDefault()
+cred = credentials.Certificate({
+  "type": "service_account",
+  "project_id": "spy-pixel-2e767",
+  "private_key_id": os.environ.get('PRIVATE_KEY_ID'),
+  "private_key": os.environ.get('PRIVATE_KEY'),
+  "client_email": "firebase-adminsdk-ji2n7@spy-pixel-2e767.iam.gserviceaccount.com",
+  "client_id": "103696212000263592882",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-ji2n7%40spy-pixel-2e767.iam.gserviceaccount.com"
+})
 firebase_admin.initialize_app(cred)
+
+# # Use a service account
+# cred = credentials.Application
+# cred = credentials.Certificate('./spy-pixel-admin-sdk.json')
+# firebase_admin.initialize_app(cred)
+
+# client = secretmanager.SecretManagerServiceClient()
+# response = client.access_secret_version(request={'name': 'spy-pixel-admin-sdk'})
+# print(response.payload.data)
+
+# cred = credentials.Certificate(response.payload.data)
+# firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 app = Flask(__name__)

@@ -3,3 +3,6 @@ runtime: python39
 handlers:
 - url: /.*
   script: main.app
+
+includes:
+  - env_variables.yaml

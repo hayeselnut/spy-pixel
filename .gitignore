@@ -1,3 +1,4 @@
 __pycache__
 .DS_Store
-spy-pixel-admin-sdk.json
+.env
+env_variables.yaml
