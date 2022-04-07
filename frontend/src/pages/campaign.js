@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Accordion, Container, Header, Icon } from 'semantic-ui-react';
+import { Accordion, Container, Header } from 'semantic-ui-react';
 import BackToHomeButton from '../components/back-to-home-button';
 import LogCookies from '../components/log-cookies';
 import LogHeaders from '../components/log-headers';
@@ -36,6 +36,7 @@ const CampaignPage = ({ campaigns }) => {
       <Header as='h1'><span style={{fontWeight: "normal"}}>Details for campaign </span>{campaignId}</Header>
       <Header as='h2'>Logs</Header>
       <Accordion styled fluid exclusive={false} panels={panels} />
+      <div style={{height: "10rem"}} />
     </Container>
   )
 }
