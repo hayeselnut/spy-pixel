@@ -38,7 +38,7 @@ def hello_world():
 @app.route('/spy-pixel.gif')
 def spy_pixel():
     # We don't want to log our own views
-    if request.headers.get("Referer") != "https://mail.google.com" and request.headers.get("Referer") != "https://hayeselnut.github.io/":
+    if request.headers.get("Referer") != "https://mail.google.com/" and request.headers.get("Referer") != "https://spy-pixel.netlify.app/":
         # Campaign is loggable
         if request.args.get("campaign"):
             # Log to database
