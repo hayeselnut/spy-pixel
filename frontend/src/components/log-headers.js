@@ -4,7 +4,6 @@ import { Icon, Table } from "semantic-ui-react";
 
 const LogHeaders = ({ headers }) => {
   const ua = parser(headers["User-Agent"]);
-  console.log(headers);
 
   return (
     <>
