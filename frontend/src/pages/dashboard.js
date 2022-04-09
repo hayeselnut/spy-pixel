@@ -40,7 +40,7 @@ const Dashboard = ({ campaigns }) => {
         </datalist>
 
         <div>
-          <Input error={!isAlphanumeric(newEmail)} icon="mail" iconPosition="left" placeholder="Email" onChange={(e, d) => { setNewEmail(d.value); setButtonicon("copy"); }} />
+          <Input error={!isAlphanumeric(newEmail)} icon="mail" iconPosition="left" placeholder="Email (optional)" onChange={(e, d) => { setNewEmail(d.value); setButtonicon("copy"); }} />
         </div>
 
         <div>
