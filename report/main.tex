@@ -60,16 +60,16 @@ If you've used a mass email service before, chances are the service also has a f
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{images/gmass.png}
-\caption{\label{fig1}GMass feature demo.}
+\caption{\label{fig1}GMass feature demo}
 \end{figure}
 
-Like Slack or old text messages, I had always assumed emails were a safe place where read receipts would never be implemented, and I could safely "seen" emails and procrastinate a reply. Clearly, something was sent along with the email invisibly, and for my project I wanted to understand how they worked, and perhaps, what other information I might be sending.
+Like Slack or old text messages, I had always assumed emails were a safe place where read receipts would never be implemented, and I could safely "seen" emails and procrastinate a reply. Clearly my assumptions were wrong, and for my project I wanted to understand how they worked, and perhaps, what other information I might be sending.
 
-After a few Google Searches, I learnt that this feature was made possible thanks to spy pixels.
+After a few Google searches, I learnt that this feature was made possible thanks to spy pixels.
 
 \subsection{What is a spy pixel?}
 
-A spy pixel is a 1x1 pixel transparent image that is sent alongside email content, with its source as an http request to a server. When the email is loaded on the recipient's side, the transparent pixel image is sent from the server, and the request is logged by the server. It looks something like this:
+A spy pixel is a 1x1 pixel transparent image that is sent alongside email content, with its source as an HTTP request to a server. When the email is loaded on the recipient's side, the transparent pixel image is sent from the server, and the request is logged by the server. It looks something like this:
 \begin{lstlisting}
 <img width="1" height="1" border="0" src="http://www.host.com/spy-pixel.png" />
 \end{lstlisting}
@@ -80,7 +80,7 @@ The server is able to parse through the request headers and extract information 
 
 Spy pixels are used \textbf{everywhere!}. On 10 March I opened up my inbox and inspected the elements of each email I received. Every newsletter seemed to contain a spy pixel embedded, to track whether I read it or not. Screenshots can be found in Appendix \ref{appendix-inbox} as examples.
 
-From a marketing perspective, this makes sense. Marketers would be able to adapt their approach to their subscribers based on the activity collected from an email. If an email was able to prompt the user to read the email, and then click on its links, and then later lead to a purchase, then the email was successful. As Richard Buckland says, "if data can be collected then it will be collected", and it seems that all digital newsletters now have this feature to better their interactions with customers.
+From a marketing perspective, this makes sense. Marketers would be able to adapt their approach to their subscribers based on the activity collected from an email. If an email was able to prompt the user to read the email, click on its links, and then later lead to a purchase, then the email would be considered successful. As Richard Buckland says, "if data can be collected then it will be collected", and it seems that all digital newsletters now have this feature to better their interactions with customers.
 
 \subsection{How to stop spy pixels}
 
@@ -96,9 +96,16 @@ The only way to really stop these spy pixels from happening is to download an ex
 \caption{\label{beem}PixelBlock blocking a spy pixel in an email from Beem It}
 \end{figure}
 
-While creating my own spy pixel service, I also discovered GMail's native approach to spy pixels. Each image rendered in an email is sent through GoogleImageProxy, which anonymises the user data. This prevented my spy pixel from detecting any of the user's metadata. So while a spy pixel is able to detect when a user has read an email, it is restricted to only do just that.
+While creating my own spy pixel service, I also discovered GMail's native approach to spy pixels. Each image rendered in an email is sent through GoogleImageProxy, which anonymises the user data. This prevented my spy pixel from detecting any of the user's metadata. So while a spy pixel is able to detect when a user has read an email, it is restricted to only do just that. Other email clients such as Outlook unfortunately don't go through the effort of anonymising user metadata. The proxy in the HTML looks like this:
 
-Other email clients such as Outlook unfortunately don't go through the effort of anonymising user metadata.
+\newpage
+
+\begin{lstlisting}
+<img border="0" width="1" height="1" src="<https://ci5.googleusercontent.com/proxy/wikffdoJfWk_6vlXa4vNaI-mb-CxwEvf
+JyjqNqxh5QR_w8HUzTG56yLC1JuiTlgg7YSXnGilNh9N9U-dmosqVXjDYFNbDbYdgOf88nOZ_YeDqo
+x3IBhvD0fmf34pzpsJ_zchN85j2WswRkd7TGLH=s0-d-e1-ft#https://fc78d80ff607aedccf6c
+95947b81ab9f.tinyemails.com/f78c1d94d2d81b947af7fdde67b24818.gif>" />
+\end{lstlisting}
 
 It's important to note that it's the process of loading an image that makes a user trackable. Spy pixels have become the industry standard since they are super small, meaning they minimally affect load times, and are transparent, meaning the user won't notice them. However, any image that loads off an external server can be used, including email signatures or header banners! These aren't detected by the above Chrome extensions, so overall, it's virtually impossible to prevent the collection of your metadata as you browse your emails.
 
@@ -112,7 +119,7 @@ Clicks are tracked using URL forwarders, such as Bitly or other URL shorterners.
 
 My backend was created using Flask in Python 3 and is deployed on a Google Cloud App Engine instance. The main code responsible is in Appendix \ref{appendix-backend-code}.
 
-The pixel is generated in the last three lines of the function. Since the image is of 1x1 pixel size, we can encode the image and store it as a hard-coded string. Thanks to the website \href{https://png-pixel.com}{\texttt{https://png-pixel.com}}, it gave me all the strings I needed. It turns out a GIF saves a few bytes, which would increase load performance, which is why I have decided on a \texttt{/spy-pixel.gif} route.
+The pixel is generated in the last three lines of the function. Since the image is of 1x1 pixel size, we can encode the image and store it as a hard-coded string. Thanks to the website \href{https://png-pixel.com}{\texttt{https://png-pixel.com}}, it gave me all the strings I needed. It turns out a GIF saves a few bytes, which would improve load performance, which is why I have decided on a \texttt{/spy-pixel.gif} route.
 
 \begin{python}
 gif_str = base64.b64decode('R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==')
@@ -124,7 +131,7 @@ When a request is called at the \texttt{/spy-pixel.gif} route, it first checks i
 if request.headers.get("Referer") != "https://mail.google.com/" and request.headers.get("Referer") != "https://spy-pixel.netlify.app/":
 \end{python}
 
-The neat thing about \texttt{http} requests is that you can also provide query parameters. The route checks for a campaign ID and an email to identify the user. Campaign IDs are compulsory so that it has a point of reference and can summarise data from multiple spy pixels. Email identifiers are optional, but allow the sender to differentiate between recipients if they wish. If there is a campaign ID present in the request, then we log the data to the database.
+Since HTTP requests won't include the email address of the recipient, I needed to find a way to link the spy pixel with a recipient or a campaign. The neat thing about HTTP requests is that you can also provide query parameters, so my spy pixel is designed to store campaign IDs and emails in the URL. Campaign IDs are compulsory so that it has a point of reference and can summarise data from multiple spy pixels. Email identifiers are optional, but allow the sender to differentiate between recipients if they wish. If there is a campaign ID present in the request, then we log the data to the database.
 
 \begin{lstlisting}
 <img width="1" height="1" border="0" src="https://spy-pixel.ts.r.appspot.com/spy-pixel.gif?campaign=CAMPAIGNID&email=E@MAIL" />
@@ -181,14 +188,14 @@ This page summarises the data collected about a certain campaign based on a camp
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{images/summary-campaign.png}
-\caption{Summary of all metadata collected from spy pixels with campaign id \texttt{test2}}
+\caption{Summary of all views collected from spy pixels with campaign ID \texttt{test2}}
 \end{figure}
 
 The logs are listed in chronological order, and can be expanded to show more information regarding the metadata collected when the spy pixel was loaded. Metadata includes the browser, device, OS and architecture extracted from the user agent, and also the country, city and IP address. Cookies are also scraped however I haven't encountered an email client that allows cookies to be scraped (this feature does work however if spy pixel is loaded in a new tab).
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.5\textwidth]{images/logs.png}
+\includegraphics[width=0.7\textwidth]{images/logs.png}
 \caption{Metadata shown in an easy-to-read table}
 \end{figure}
 
@@ -206,17 +213,17 @@ While inspecting the HTML in emails, you might notice two odd things: inline sty
 
 \begin{figure}[H]
     \centering
-    \subfloat[\centering Email's HTML with inline styling]{{\includegraphics[width=0.5\textwidth]{images/htmlinspectedemail.png} }}
+    \subfloat[\centering Email's HTML with inline styling and table tags]{{\includegraphics[width=0.5\textwidth]{images/htmlinspectedemail.png} }}
     \qquad
     \subfloat[\centering Rendered email]{{\includegraphics[width=0.4\textwidth]{images/unswlaunchyourcareer.png} }}
     \caption{HTML contains tables, yet the original email has no data tables visible}
 \end{figure}
 
-It turns out that emails have to use HTML like this because of the restrictions of email clients. Emails are rendered statically, not dynamically like a React website. This means it isn't able to respond to user input and change its content. Due to the multitude of screen sizes, browsers, devices and email clients there are available, there are over 15000 ways an email can be rendered (an accuracy check can be found in Appendix \ref{appendix-number-of-ways-to-render-email}). In other words, there are 15000 ways to parse an HTML document, and so HTML must be written in a way that even the most basic email client can render an email exactly as the sender intended.
+It turns out that emails have to use HTML like this because of the restrictions of email clients. Email clients are old school, meaning they haven't changed much since their introduction. Emails are also rendered statically, not dynamically like a React website, meaning they aren't able to respond to user input and change its content. Due to the multitude of screen sizes, browsers, devices and email clients there are available, there are over 15000 ways an email can be rendered (an accuracy check can be found in Appendix \ref{appendix-number-of-ways-to-render-email}). In other words, there are 15000 ways to parse an HTML document, and so HTML must be written in a way that even the most basic email client can render an email exactly as the sender intended.
 
-For example, some email clients strip away \texttt{<head>} when rendering the email, taking away with it the style sheets. Not only does this explain the overbearing presence of inline styling being, but also why emails don't tend to use non-browser friendly fonts that you would typically be able to load with a CSS style sheet.
+For example, some email clients strip away \texttt{<head>} when rendering the email, taking away with it the style sheets. Not only does this explain the overbearing presence of inline styling, but also why emails don't tend to use non-browser friendly fonts that you would typically be able to load with a CSS style sheet.
 
-Some email clients also don't render \texttt{div} blocks properly, and can only render \texttt{table}s. To ensure the layout is preserved across all email clients, senders must use \texttt{table}, \texttt{tr} and \texttt{td} to format columns and rows.
+Some email clients also don't render \texttt{div} blocks properly, and can only render \texttt{table}s. To ensure the layout is preserved across all email clients, senders must use \texttt{table}, \texttt{tr} and \texttt{td} to format the contents of the email.
 
 HTML is also rendered from top to bottom, just like HTML in the web. To ensure email's content is loaded quickly, the spy pixel should be placed at the bottom of the email.
 
@@ -260,7 +267,7 @@ Unlike other data gathering tools, spy pixels secretly collect this information 
 
 \begin{figure}[H]
     \centering
-    \subfloat[\centering Glue embeds a spy pixel at the top styling]{{\includegraphics[width=0.4\textwidth]{images/glue_top.png} }}
+    \subfloat[\centering Glue embeds a spy pixel at the top]{{\includegraphics[width=0.4\textwidth]{images/glue_top.png} }}
     \qquad
     \subfloat[\centering Glue embeds a second spy pixel at the bottom]{{\includegraphics[width=0.4\textwidth]{images/glue_bot.png} }}
     \caption{Glue embeds two spy pixels in their email}
@@ -384,7 +391,7 @@ Altogether, there are $\mathbf{6600 + 9800 = 16400}$ different ways to render an
     \hline
     Frontend development & 8 &  \\
     \hline
-    Frontend deployment & 2 & Blogpost \href{https://www.openlearning.com/u/hayeschoy-r7a9ti/blog/SomethingAwesomeFrontendDeployed/}{Frontend Deployed} \newline GitHub Pages didn't work, so after a bunch of  had to learn and use Netlify \\
+    Frontend deployment & 2 & Blogpost \href{https://www.openlearning.com/u/hayeschoy-r7a9ti/blog/SomethingAwesomeFrontendDeployed/}{Frontend Deployed} \newline GitHub Pages didn't work, so after a lots of debugging, decided to learn and use Netlify instead \\
     \hline
     Debug and clean & 3 & Changing icons, fixing backend logging unwanted views where referer was definitely the user \\
     \hline
